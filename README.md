@@ -5,20 +5,14 @@ The messaging retrival is based on a SSE(EventStream) model.  This means no clie
 
 Be sure to create the config.js file with in the js folder and enter your own parameters:
     
-    PARAM 1: URL for ICWS
-    
-    PARAM 2: ICWS Username
-    
-    PARAM 3: ICWS Password
-
-
+   
     define(function(){
         let params = {
-            //PARAM 1:
+            //PARAM 1: URL for ICWS
             url : "https://acme.com/api/sessionmanager",
-            //PARAM 2:
+            //PARAM 2: ICWS Username
             username : "username",
-            //PARAM 3:
+            //PARAM 3: ICWS Password
             password : "password"
         }
         return params
