@@ -13,6 +13,7 @@ requirejs.config({
 
 require(['_util', 'messaging', 'connection', 'messaging.subscriptions', 'queues',], function(_util, messaging, connection, messagingsubscriptions, queues){
     // Set the base url so the library knows how to map its server calls
+    //PARAM 1:  ENTER YOUR URL TO ICWS HERE
     _util.setBaseUrl('https://acme.com/api/sessionmanager');
     
     // Variable to hold an EventSource instance in case server-sent events is supported.
@@ -22,7 +23,9 @@ require(['_util', 'messaging', 'connection', 'messaging.subscriptions', 'queues'
     var connectionParams = new connection.IcAuthConnectionRequestSettings();
     
     connectionParams.applicationName = 'icwsconnect';
+    //PARAM 2:  ENTER YOUR ICWS USERNAME HERE
     connectionParams.userID = 'user';
+    //PARAM 3:  ENTER YOUR ICWS USER PASSWORD HERE
     connectionParams.password = 'password';
     
     // Connect to the IC server
@@ -125,6 +128,7 @@ require(['_util', 'messaging', 'connection', 'messaging.subscriptions', 'queues'
     
     function handleMessage(message) {
         // Omitted:  TODO, handle message
+        console.log("INCOMING MESSAGE:",message)
     }
     function startUserQueueProcessing(sICWSAppUser) {
         var queueObject1 = new queues.QueueSubscriptionParameters;
