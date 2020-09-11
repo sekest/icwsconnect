@@ -9,8 +9,9 @@ requirejs.config({
     paths: {
         app: '../app'
     }
-});       
-require(['_util', 'messaging', 'connection'], function(_util, messaging, connection){
+});
+
+require(['_util', 'messaging', 'connection', 'messaging.subscriptions', 'queues',], function(_util, messaging, connection, messagingsubscriptions, queues){
     // Set the base url so the library knows how to map its server calls
     _util.setBaseUrl('https://acme.com/api/sessionmanager');
     
@@ -60,6 +61,7 @@ require(['_util', 'messaging', 'connection'], function(_util, messaging, connect
                     
                     // Start message processing
                     startMessageProcessing(messagingVersion);
+                    startUserQueueProcessing(connectionResponse.__prop_userID);
                 },
                 '401': handleConnectionError,
                 'timeout': handleConnectionError,
@@ -123,5 +125,27 @@ require(['_util', 'messaging', 'connection'], function(_util, messaging, connect
     
     function handleMessage(message) {
         // Omitted:  TODO, handle message
+    }
+    function startUserQueueProcessing(sICWSAppUser) {
+        var queueObject1 = new queues.QueueSubscriptionParameters;
+        queueObject1.queueIds = [{'queueType': '1','queueName': sICWSAppUser}]
+        queueObject1.attributeNames = [
+          "Eic_RemoteId",
+          "Eic_RemoteName",
+          "Eic_CallState",
+        ]
+        var queueSubParams = new messagingsubscriptions.$queues.updateQueueSubscription.params(
+          {
+            content: queueObject1,
+            template: {
+              'subscriptionId': "SUB_"+sICWSAppUser,
+            },
+          });
+          messagingsubscriptions.$queues.updateQueueSubscription(queueSubParams,
+            {
+              '200': function(xhr, updateQueueSubResponse) {
+                if(updateQueueSubResponse) console.log(updateQueueSubResponse);
+              },
+            });
     }
 });
