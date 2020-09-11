@@ -12,14 +12,14 @@ Be sure to create the config.js file with in the js folder and enter your own pa
     PARAM 3: ICWS Password
 
 
-define(function(){
-    let params = {
-        //PARAM 1:
-        url : "https://acme.com/api/sessionmanager",
-        //PARAM 2:
-        username : "username",
-        //PARAM 3:
-        password : "password"
-    }
-	return params
-});
+    define(function(){
+        let params = {
+            //PARAM 1:
+            url : "https://acme.com/api/sessionmanager",
+            //PARAM 2:
+            username : "username",
+            //PARAM 3:
+            password : "password"
+        }
+        return params
+    });
