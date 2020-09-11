@@ -11,10 +11,10 @@ requirejs.config({
     }
 });
 
-require(['_util', 'messaging', 'connection', 'messaging.subscriptions', 'queues',], function(_util, messaging, connection, messagingsubscriptions, queues){
+require(['_util', 'messaging', 'connection', 'messaging.subscriptions', 'queues', '../config'], function(_util, messaging, connection, messagingsubscriptions, queues, config){
     // Set the base url so the library knows how to map its server calls
-    //PARAM 1:  ENTER YOUR URL TO ICWS HERE
-    _util.setBaseUrl('https://acme.com/api/sessionmanager');
+    //ICWSCONNECT NOTES: The URL below is pulled from the js/config.js file.  Be sure to have proper parameter values there before running.
+    _util.setBaseUrl(config.url);
     
     // Variable to hold an EventSource instance in case server-sent events is supported.
     var eventSource;
@@ -22,11 +22,13 @@ require(['_util', 'messaging', 'connection', 'messaging.subscriptions', 'queues'
     // Setup some connection parameters
     var connectionParams = new connection.IcAuthConnectionRequestSettings();
     
+    console.log(config)
+
     connectionParams.applicationName = 'icwsconnect';
-    //PARAM 2:  ENTER YOUR ICWS USERNAME HERE
-    connectionParams.userID = 'user';
-    //PARAM 3:  ENTER YOUR ICWS USER PASSWORD HERE
-    connectionParams.password = 'password';
+    //ICWSCONNECT NOTES: The username below is pulled from the js/config.js file.  Be sure to have proper parameter values there before running.
+    connectionParams.userID = config.username;
+    //ICWSCONNECT NOTES: The password below is pulled from the js/config.js file.  Be sure to have proper parameter values there before running.
+    connectionParams.password = config.password;
     
     // Connect to the IC server
     connection.$connection.createConnection(
