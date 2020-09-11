@@ -3,7 +3,7 @@ define(function(){
         //PARAM 1:
         url : "https://acme.com/api/sessionmanager",
         //PARAM 2:
-        username : "user",
+        username : "roger",
         //PARAM 3:
         password : "password"
     }
