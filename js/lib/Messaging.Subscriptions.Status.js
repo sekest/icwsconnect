@@ -279,7 +279,7 @@ define(['./_util', './_typemap', './Common', './Status'], function(_util, _typem
                 if (!_util.hasProp(properties.header, 'ININ-ICWS-CSRF-Token')) {
                     throw new Error('`properties.header` is missing required property: `ININ-ICWS-CSRF-Token`');
                 }
-                if (!(properties.content instanceof Status.UserStatusSubscription)) {
+                if (!(properties.content.constructor.name == "UserStatusSubscription")) {
                     throw new TypeError('`properties.content` value does not match the expected type: Status.UserStatusSubscription');
                 }
 

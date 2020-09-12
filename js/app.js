@@ -11,7 +11,7 @@ requirejs.config({
     }
 });
 
-require(['_util', 'messaging', 'connection', 'messaging.subscriptions', 'queues', '../config'], function(_util, messaging, connection, messagingsubscriptions, queues, config){
+require(['_util', 'messaging', 'connection', 'messaging.subscriptions', 'queues','messaging.subscriptions.status','status', '../config'], function(_util, messaging, connection, messagingsubscriptions, queues,messagingsubscriptionsstatus, Status, config){
     // Set the base url so the library knows how to map its server calls
     //ICWSCONNECT NOTES: The URL below is pulled from the js/config.js file.  Be sure to have proper parameter values there before running.
     _util.setBaseUrl(config.url);
@@ -21,8 +21,6 @@ require(['_util', 'messaging', 'connection', 'messaging.subscriptions', 'queues'
     
     // Setup some connection parameters
     var connectionParams = new connection.IcAuthConnectionRequestSettings();
-    
-    console.log(config)
 
     connectionParams.applicationName = 'icwsconnect';
     //ICWSCONNECT NOTES: The username below is pulled from the js/config.js file.  Be sure to have proper parameter values there before running.
@@ -67,6 +65,7 @@ require(['_util', 'messaging', 'connection', 'messaging.subscriptions', 'queues'
                     // Start message processing
                     startMessageProcessing(messagingVersion);
                     startUserQueueProcessing(connectionResponse.__prop_userID);
+                    startUserStatusProcessing(connectionResponse.__prop_userID);
                 },
                 '401': handleConnectionError,
                 'timeout': handleConnectionError,
@@ -130,7 +129,44 @@ require(['_util', 'messaging', 'connection', 'messaging.subscriptions', 'queues'
     
     function handleMessage(message) {
         // Omitted:  TODO, handle message
-        console.log("INCOMING MESSAGE:",message)
+        let messageList = document.querySelector('#message-list');
+        if(Array.isArray(message.__prop_userStatusList) && message.__prop_userStatusList.length){
+            message.__prop_userStatusList.forEach(function(entry) {
+                //console.log(" User: "+entry.__prop_userId+" Status: "+entry.__prop_statusId+" LoggedIn?: "+entry.__prop_loggedIn+" On Phone?: "+entry.__prop_onPhone)
+                let listItem = document.createElement('li')
+                listItem.textContent = "User: "+entry.__prop_userId+" Status: "+entry.__prop_statusId+" LoggedIn?: "+entry.__prop_loggedIn+" On Phone?: "+entry.__prop_onPhone
+                listItem.classList.add('list-group-item')
+                messageList.appendChild(listItem)
+            })
+        }
+        if(Array.isArray(message.__prop_interactionsAdded) && message.__prop_interactionsAdded.length){
+            message.__prop_interactionsAdded.forEach(function(entry) {
+                //console.log(entry)
+                let listItem = document.createElement('li')
+                listItem.textContent = "Interaction: "+entry.__prop_interactionId+" Attributes: "+ JSON.stringify(entry.__prop_attributes)
+                listItem.classList.add('list-group-item')
+                messageList.appendChild(listItem)
+            })
+        }
+        if(Array.isArray(message.__prop_interactionsChanged) && message.__prop_interactionsChanged.length){
+            message.__prop_interactionsChanged.forEach(function(entry) {
+                //console.log(entry)
+                let listItem = document.createElement('li')
+                listItem.textContent = "Interaction: "+entry.__prop_interactionId+" Attributes: "+ JSON.stringify(entry.__prop_attributes)
+                listItem.classList.add('list-group-item')
+                messageList.appendChild(listItem)
+            })
+        }
+        if(Array.isArray(message.__prop_interactionsRemoved) && message.__prop_interactionsRemoved.length){
+            message.__prop_interactionsRemoved.forEach(function(entry) {
+                //console.log("Interaction: ",entry," Removed")
+                let listItem = document.createElement('li')
+                listItem.textContent = "Interaction: "+entry+" Removed"
+                listItem.classList.add('list-group-item')
+                messageList.appendChild(listItem)
+            })
+        }
+        
     }
     function startUserQueueProcessing(sICWSAppUser) {
         var queueObject1 = new queues.QueueSubscriptionParameters;
@@ -150,7 +186,21 @@ require(['_util', 'messaging', 'connection', 'messaging.subscriptions', 'queues'
           messagingsubscriptions.$queues.updateQueueSubscription(queueSubParams,
             {
               '200': function(xhr, updateQueueSubResponse) {
-                if(updateQueueSubResponse) console.log(updateQueueSubResponse);
+                //if(updateQueueSubResponse) console.log(updateQueueSubResponse);
+              },
+            });
+    }
+    function startUserStatusProcessing(sICWSAppUser) {
+        var statusSubObject1 = new Status.UserStatusSubscription;
+        statusSubObject1.userIds = [sICWSAppUser];
+        var statusUpdateSubParams = new messagingsubscriptionsstatus.$userStatuses.updateUserStatusSubscription.params(
+          {
+            content: statusSubObject1,
+          });
+          messagingsubscriptionsstatus.$userStatuses.updateUserStatusSubscription(statusUpdateSubParams,
+            {
+              '200': function(xhr, updateStatusSubResponse) {
+                //if(updateStatusSubResponse) console.log(updateStatusSubResponse);
               },
             });
     }
